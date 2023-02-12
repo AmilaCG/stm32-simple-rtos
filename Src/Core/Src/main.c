@@ -112,32 +112,25 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  // TODO: Had to do a lot of trial and error to find the register
-  // sequence below. Need to find the exact data sheet.
-
   // Fabricate Cortex-M ISR stack frame for blinky1
   *(--sp_blinky1) = (1U << 24); // xPSR
   *(--sp_blinky1) = (uint32_t)&main_blinky1; //PC
   *(--sp_blinky1) = 0x0000000EU; // LR
   *(--sp_blinky1) = 0x0000000CU; // R12
-  *(--sp_blinky1) = 0x00000005U; // R3
-  *(--sp_blinky1) = 0x00000004U; // R2
-  *(--sp_blinky1) = 0x00000003U; // R1
-  *(--sp_blinky1) = 0x00000002U; // R0
-  *(--sp_blinky1) = 0xFFFFFFF9U; // Unknown
-  *(--sp_blinky1) = 0x00000001U; // R7
+  *(--sp_blinky1) = 0x00000003U; // R3
+  *(--sp_blinky1) = 0x00000002U; // R2
+  *(--sp_blinky1) = 0x00000001U; // R1
+  *(--sp_blinky1) = 0x00000000U; // R0
 
   // Fabricate Cortex-M ISR stack frame for blinky2
   *(--sp_blinky2) = (1U << 24); // xPSR
   *(--sp_blinky2) = (uint32_t)&main_blinky2; //PC
   *(--sp_blinky2) = 0x0000000EU; // LR
   *(--sp_blinky2) = 0x0000000CU; // R12
-  *(--sp_blinky2) = 0x00000005U; // R3
-  *(--sp_blinky2) = 0x00000004U; // R2
-  *(--sp_blinky2) = 0x00000003U; // R1
-  *(--sp_blinky2) = 0x00000002U; // R0
-  *(--sp_blinky2) = 0xFFFFFFF9U; // Unknown
-  *(--sp_blinky2) = 0x00000001U; // R7
+  *(--sp_blinky2) = 0x00000003U; // R3
+  *(--sp_blinky2) = 0x00000002U; // R2
+  *(--sp_blinky2) = 0x00000001U; // R1
+  *(--sp_blinky2) = 0x00000000U; // R0
 
   /* USER CODE END 2 */
 
