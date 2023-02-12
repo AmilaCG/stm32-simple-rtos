@@ -54,7 +54,27 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void main_blinky1()
+{
+  while (1)
+  {
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+    HAL_Delay(500);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+    HAL_Delay(500);
+  }
+}
 
+void main_blinky2()
+{
+  while (1)
+  {
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+    HAL_Delay(1000);
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -87,6 +107,13 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  uint32_t volatile run = 0U;
+
+  if (run)
+  {
+    main_blinky1();
+    main_blinky2();
+  }
 
   /* USER CODE END 2 */
 
