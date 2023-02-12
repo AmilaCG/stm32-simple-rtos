@@ -168,15 +168,26 @@ void DebugMon_Handler(void)
 /**
   * @brief This function handles Pendable request for system service.
   */
-void PendSV_Handler(void)
-{
-  /* USER CODE BEGIN PendSV_IRQn 0 */
-
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
-
-  /* USER CODE END PendSV_IRQn 1 */
-}
+//void PendSV_Handler(void)
+//{
+//  /* USER CODE BEGIN PendSV_IRQn 0 */
+//  void* sp;
+//
+//  __disable_irq();
+//  if (osCurr != (OSThread*)0)
+//  {
+//    // Push registers r4-r11 on the stack
+//    osCurr->sp = sp;
+//  }
+//  sp = osNext->sp;
+//  osCurr = osNext;
+//  // Pop registers r4-r11
+//  __enable_irq();
+//  /* USER CODE END PendSV_IRQn 0 */
+//  /* USER CODE BEGIN PendSV_IRQn 1 */
+//
+//  /* USER CODE END PendSV_IRQn 1 */
+//}
 
 /**
   * @brief This function handles System tick timer.

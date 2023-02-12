@@ -67,3 +67,19 @@ void OSThread_start(
     *sp = 0xDEADBEEFU;
   }
 }
+
+void PendSV_Handler(void)
+{
+  void* sp;
+
+  __disable_irq();
+  if (osCurr != (OSThread*)0)
+  {
+    // Push registers r4-r11 on the stack
+    osCurr->sp = sp;
+  }
+  sp = osNext->sp;
+  osCurr = osNext;
+  // Pop registers r4-r11
+  __enable_irq();
+}
