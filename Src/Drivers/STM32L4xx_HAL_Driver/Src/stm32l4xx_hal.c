@@ -329,13 +329,6 @@ __weak void HAL_IncTick(void)
   uwTick += (uint32_t)uwTickFreq;
 }
 
-// Moved the SysTick_Handler from stm32l4xx_it.c to here for simplicity.
-// Directly incrementing the uwTick instead of calling HAL_IncTick().
-void SysTick_Handler(void)
-{
-  uwTick += (uint32_t)uwTickFreq;
-}
-
 /**
   * @brief Provide a tick value in millisecond.
   * @note This function is declared as __weak to be overwritten in case of other
