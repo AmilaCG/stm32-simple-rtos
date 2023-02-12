@@ -54,6 +54,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint32_t stack_blinky1[40];
+uint32_t* sp_blinky1 = &stack_blinky1[40]; // Stack pointer for blinky1
 void main_blinky1()
 {
   while (1)
@@ -65,6 +67,8 @@ void main_blinky1()
   }
 }
 
+uint32_t stack_blinky2[40];
+uint32_t* sp_blinky2 = &stack_blinky2[40]; // Stack pointer for blinky2
 void main_blinky2()
 {
   while (1)
@@ -107,13 +111,33 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t volatile run = 0U;
 
-  if (run)
-  {
-    main_blinky1();
-    main_blinky2();
-  }
+  // TODO: Had to do a lot of trial and error to find the register
+  // sequence below. Need to find the exact data sheet.
+
+  // Fabricate Cortex-M ISR stack frame for blinky1
+  *(--sp_blinky1) = (1U << 24); // xPSR
+  *(--sp_blinky1) = (uint32_t)&main_blinky1; //PC
+  *(--sp_blinky1) = 0x0000000EU; // LR
+  *(--sp_blinky1) = 0x0000000CU; // R12
+  *(--sp_blinky1) = 0x00000005U; // R3
+  *(--sp_blinky1) = 0x00000004U; // R2
+  *(--sp_blinky1) = 0x00000003U; // R1
+  *(--sp_blinky1) = 0x00000002U; // R0
+  *(--sp_blinky1) = 0xFFFFFFF9U; // Unknown
+  *(--sp_blinky1) = 0x00000001U; // R7
+
+  // Fabricate Cortex-M ISR stack frame for blinky2
+  *(--sp_blinky2) = (1U << 24); // xPSR
+  *(--sp_blinky2) = (uint32_t)&main_blinky2; //PC
+  *(--sp_blinky2) = 0x0000000EU; // LR
+  *(--sp_blinky2) = 0x0000000CU; // R12
+  *(--sp_blinky2) = 0x00000005U; // R3
+  *(--sp_blinky2) = 0x00000004U; // R2
+  *(--sp_blinky2) = 0x00000003U; // R1
+  *(--sp_blinky2) = 0x00000002U; // R0
+  *(--sp_blinky2) = 0xFFFFFFF9U; // Unknown
+  *(--sp_blinky2) = 0x00000001U; // R7
 
   /* USER CODE END 2 */
 
