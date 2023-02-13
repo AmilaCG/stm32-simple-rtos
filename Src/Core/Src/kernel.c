@@ -21,6 +21,18 @@ void OS_init(void)
 
 void OS_sched(void)
 {
+  extern OSThread blinky1;
+  extern OSThread blinky2;
+
+  if (osCurr == &blinky1)
+  {
+    osNext = &blinky2;
+  }
+  else
+  {
+    osNext = &blinky1;
+  }
+
   if (osNext != osCurr)
   {
     // Trigger the PendSV interrupt
@@ -93,7 +105,7 @@ __asm volatile (
   // sp = osNext->sp;
   "  ldr          r1,=osNext        \n"
   "  ldr          r1,[r1,#0x00]     \n"
-  "  mov          sp,r1             \n"
+  "  ldr          sp,[r1,#0x00]     \n"
 
   // osCurr = osNext;
   "  ldr          r1,=osNext        \n"
