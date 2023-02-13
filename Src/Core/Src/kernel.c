@@ -38,7 +38,7 @@ void OSThread_start(
 
   // Fabricate Cortex-M ISR stack frame for blinky1
   *(--sp) = (1U << 24); // xPSR
-  *(--sp) = (uint32_t)&threadHandler; //PC
+  *(--sp) = (uint32_t)threadHandler; //PC
   *(--sp) = 0x0000000EU; // LR
   *(--sp) = 0x0000000CU; // R12
   *(--sp) = 0x00000003U; // R3
@@ -68,18 +68,45 @@ void OSThread_start(
   }
 }
 
+__attribute__ ((naked))
 void PendSV_Handler(void)
 {
-  void* sp;
+__asm volatile (
+  // __disable_irq();
+  "  cpsid        i                 \n"
 
-  __disable_irq();
-  if (osCurr != (OSThread*)0)
-  {
-    // Push registers r4-r11 on the stack
-    osCurr->sp = sp;
-  }
-  sp = osNext->sp;
-  osCurr = osNext;
-  // Pop registers r4-r11
-  __enable_irq();
+  // if (osCurr != (OSThread *)0) {
+  "  ldr          r1,=osCurr        \n"
+  "  ldr          r1,[r1,#0x00]     \n"
+  "  cbz          r1,PendSV_restore \n"
+
+  // Push registers r4-r11 on the stack
+  "  push         {r4-r11}          \n"
+
+  // osCurr->sp = sp;
+  "  ldr          r1,=osCurr        \n"
+  "  ldr          r1,[r1,#0x00]     \n"
+  "  str          sp,[r1,#0x00]     \n"
+  // }
+
+  "PendSV_restore:                   \n"
+  // sp = osNext->sp;
+  "  ldr          r1,=osNext        \n"
+  "  ldr          r1,[r1,#0x00]     \n"
+  "  mov          sp,r1             \n"
+
+  // osCurr = osNext;
+  "  ldr          r1,=osNext        \n"
+  "  ldr          r1,[r1,#0x00]     \n"
+  "  ldr          r2,=osCurr        \n"
+  "  str          r1,[r2,#0x00]     \n"
+
+  // pop registers r4-r11
+  "  pop          {r4-r11}          \n"
+
+  // __enable_irq();
+  "  cpsie        i                 \n"
+
+  // return to the next thread
+  "  bx           lr                \n");
 }
