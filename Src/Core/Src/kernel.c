@@ -101,7 +101,7 @@ __asm volatile (
   "  str          sp,[r1,#0x00]     \n"
   // }
 
-  "PendSV_restore:                   \n"
+  "PendSV_restore:                  \n"
   // sp = osNext->sp;
   "  ldr          r1,=osNext        \n"
   "  ldr          r1,[r1,#0x00]     \n"
