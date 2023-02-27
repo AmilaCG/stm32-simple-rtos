@@ -8,9 +8,16 @@
 #include "kernel.h"
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal_cortex.h"
+#include "qassert.h"
+
+Q_DEFINE_THIS_FILE
 
 OSThread* volatile osCurr; // Pointer to the current thread
 OSThread* volatile osNext; // Pointer to the next thread
+
+OSThread* osThreads[32 + 1]; // Array of threads started so far
+uint8_t osThreadNum; // Number of threads started so far
+uint8_t osCurrIdx; // Current thread index for round robin scheduling
 
 void OS_init(void)
 {
@@ -78,6 +85,12 @@ void OSThread_start(
   {
     *sp = 0xDEADBEEFU;
   }
+
+  Q_ASSERT(osThreadNum < Q_DIM(osThreads));
+
+  // Register the thread within the OS
+  osThreads[osThreadNum] = thread;
+  osThreadNum++;
 }
 
 __attribute__ ((naked))
@@ -121,4 +134,12 @@ __asm volatile (
 
   // return to the next thread
   "  bx           lr                \n");
+}
+
+void Q_onAssert(char const* module, int loc)
+{
+  // TBD damage control
+  (void)module; // Avoid the "unused parameter" warning
+  (void)loc; // Avoid the "unused parameter" warning
+  NVIC_SystemReset();
 }
